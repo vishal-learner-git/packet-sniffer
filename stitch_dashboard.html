@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NetSentry Sentinel | Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "on-error": "#690005",
+                "inverse-primary": "#00677e",
+                "primary-container": "#00d4ff",
+                "on-secondary-container": "#b7b4b4",
+                "primary-fixed-dim": "#3cd7ff",
+                "tertiary-container": "#ffaea7",
+                "on-secondary-fixed": "#1c1b1b",
+                "on-primary-fixed": "#001f27",
+                "surface-bright": "#3a3939",
+                "surface-container-low": "#1c1b1b",
+                "inverse-on-surface": "#313030",
+                "secondary-fixed": "#e5e2e1",
+                "background": "#131313",
+                "surface-container": "#201f1f",
+                "on-background": "#e5e2e1",
+                "secondary-container": "#474646",
+                "on-error-container": "#ffdad6",
+                "on-surface": "#e5e2e1",
+                "on-tertiary-container": "#a40014",
+                "surface-dim": "#131313",
+                "on-primary-fixed-variant": "#004e5f",
+                "on-surface-variant": "#bbc9cf",
+                "surface-variant": "#353534",
+                "on-tertiary-fixed": "#410003",
+                "secondary": "#c9c6c5",
+                "on-primary": "#003642",
+                "inverse-surface": "#e5e2e1",
+                "outline-variant": "#3c494e",
+                "tertiary-fixed-dim": "#ffb3ad",
+                "primary-fixed": "#b4ebff",
+                "tertiary-fixed": "#ffdad6",
+                "primary": "#a8e8ff",
+                "surface-tint": "#3cd7ff",
+                "tertiary": "#ffd5d1",
+                "on-secondary": "#313030",
+                "on-tertiary": "#680008",
+                "error-container": "#93000a",
+                "surface": "#131313",
+                "outline": "#859398",
+                "surface-container-highest": "#353534",
+                "error": "#ffb4ab",
+                "on-secondary-fixed-variant": "#474646",
+                "surface-container-lowest": "#0e0e0e",
+                "surface-container-high": "#2a2a2a",
+                "secondary-fixed-dim": "#c9c6c5",
+                "on-tertiary-fixed-variant": "#930010",
+                "on-primary-container": "#00586b"
+              },
+              fontFamily: {
+                "headline": ["Space Grotesk"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+            },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .status-pulse {
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.4; box-shadow: 0 0 5px rgba(0, 212, 255, 0.2); }
+            50% { opacity: 1; box-shadow: 0 0 15px rgba(0, 212, 255, 0.6); }
+        }
+        .error-pulse {
+            animation: error-glow 1.5s infinite ease-in-out;
+        }
+        @keyframes error-glow {
+            0%, 100% { box-shadow: 0 0 2px rgba(255, 180, 171, 0.3); }
+            50% { box-shadow: 0 0 12px rgba(255, 180, 171, 0.8); }
+        }
+        .glass-panel {
+            background: rgba(42, 42, 42, 0.7);
+            backdrop-filter: blur(20px);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #131313; }
+        ::-webkit-scrollbar-thumb { background: #353534; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00d4ff; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-[#131313] no-border bg-[#1c1b1b]">
+<div class="flex items-center gap-4">
+<span class="text-2xl font-black text-[#e5e2e1] tracking-widest uppercase font-headline">NetSentry Sentinel</span>
+<div class="flex items-center gap-2 px-3 py-1 bg-surface-container-lowest rounded-full border border-outline-variant/10">
+<span class="w-2 h-2 rounded-full bg-primary-container status-pulse"></span>
+<span class="text-[10px] font-label font-bold uppercase tracking-wider text-primary-container">Live Monitoring</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex items-center bg-surface-container-lowest px-4 py-1.5 rounded-lg border border-outline-variant/10">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-xs font-label tracking-widest text-on-surface w-48 placeholder:text-on-surface-variant/40" placeholder="QUERY NETWORK..." type="text"/>
+</div>
+<div class="flex gap-4">
+<button class="text-[#e5e2e1] hover:text-[#a8e8ff] transition-colors scale-95 active:duration-100"><span class="material-symbols-outlined" data-icon="sensors">sensors</span></button>
+<button class="text-[#e5e2e1] hover:text-[#a8e8ff] transition-colors scale-95 active:duration-100 relative">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-[#e5e2e1] hover:text-[#a8e8ff] transition-colors scale-95 active:duration-100"><span class="material-symbols-outlined" data-icon="account_circle">account_circle</span></button>
+</div>
+</div>
+</header>
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] z-40 flex flex-col py-8 bg-[#1c1b1b] no-border bg-gradient-to-r from-[#1c1b1b] to-[#131313] w-64">
+<div class="px-6 mb-8">
+<h2 class="text-[#00d4ff] font-black font-headline tracking-tighter text-xl">NetSentry</h2>
+<p class="text-[10px] text-on-surface-variant/60 font-label tracking-[0.2em] uppercase">Sentinel v2.0</p>
+</div>
+<nav class="flex-1 space-y-1 px-3">
+<a class="flex items-center gap-4 px-4 py-3 text-[#00d4ff] bg-[#2a2a2a] border-l-4 border-[#00d4ff] shadow-[0_0_15px_rgba(0,212,255,0.3)] font-label font-medium text-sm tracking-wide uppercase translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#e5e2e1]/60 hover:bg-[#2a2a2a] hover:text-[#e5e2e1] transition-all duration-300 font-label font-medium text-sm tracking-wide uppercase" href="#">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+<span>Threat Triage</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#e5e2e1]/60 hover:bg-[#2a2a2a] hover:text-[#e5e2e1] transition-all duration-300 font-label font-medium text-sm tracking-wide uppercase" href="#">
+<span class="material-symbols-outlined" data-icon="hub">hub</span>
+<span>Nodes</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#e5e2e1]/60 hover:bg-[#2a2a2a] hover:text-[#e5e2e1] transition-all duration-300 font-label font-medium text-sm tracking-wide uppercase" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#e5e2e1]/60 hover:bg-[#2a2a2a] hover:text-[#e5e2e1] transition-all duration-300 font-label font-medium text-sm tracking-wide uppercase" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="px-4 mt-auto space-y-4">
+<button class="w-full bg-primary-container text-on-primary py-3 rounded-lg font-headline font-bold text-xs uppercase tracking-widest hover:brightness-110 transition-all shadow-[0_0_20px_rgba(0,212,255,0.2)]">
+                Deploy Sensor
+            </button>
+<div class="pt-4 border-t border-outline-variant/10 space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-xs text-on-surface-variant hover:text-on-surface uppercase tracking-tighter" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="help_outline">help_outline</span> Support
+                </a>
+<a class="flex items-center gap-3 px-4 py-2 text-xs text-on-surface-variant hover:text-on-surface uppercase tracking-tighter" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="terminal">terminal</span> System Log
+                </a>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 mt-16 p-8 h-[calc(100vh-64px-40px)] overflow-y-auto bg-background">
+<!-- Metric Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+<!-- Packet Velocity -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5 group hover:bg-surface-container-high transition-colors">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-label font-bold uppercase tracking-[0.2em] text-on-surface-variant">Packet Velocity</span>
+<span class="material-symbols-outlined text-primary-container text-lg" data-icon="speed">speed</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-headline font-bold text-on-surface">780k</span>
+<span class="text-xs font-label text-primary-container">pkts/sec</span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container-lowest rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[78%]"></div>
+</div>
+</div>
+<!-- Active Threats -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5 group hover:bg-surface-container-high transition-colors">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-label font-bold uppercase tracking-[0.2em] text-on-surface-variant">Active Threats</span>
+<span class="material-symbols-outlined text-error text-lg" data-icon="gpp_maybe">gpp_maybe</span>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col">
+<span class="text-3xl font-headline font-bold text-error">02</span>
+<span class="text-[9px] font-label uppercase tracking-widest text-error/60">Critical</span>
+</div>
+<div class="w-px h-10 bg-outline-variant/20 self-center"></div>
+<div class="flex flex-col">
+<span class="text-3xl font-headline font-bold text-tertiary-container">08</span>
+<span class="text-[9px] font-label uppercase tracking-widest text-tertiary-container/60">High</span>
+</div>
+</div>
+</div>
+<!-- Risk IQ Score -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5 group hover:bg-surface-container-high transition-colors">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-label font-bold uppercase tracking-[0.2em] text-on-surface-variant">Risk IQ Score</span>
+<span class="material-symbols-outlined text-on-surface-variant text-lg" data-icon="psychology">psychology</span>
+</div>
+<div class="relative flex items-center justify-center h-16">
+<svg class="w-20 h-20 -rotate-90">
+<circle class="text-surface-container-lowest" cx="40" cy="40" fill="none" r="32" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-primary-container" cx="40" cy="40" fill="none" r="32" stroke="currentColor" stroke-dasharray="201" stroke-dashoffset="56" stroke-width="4"></circle>
+</svg>
+<span class="absolute text-xl font-headline font-bold">72</span>
+</div>
+<p class="text-[9px] text-center font-label text-on-surface-variant uppercase mt-1">Status: Stable</p>
+</div>
+<!-- Nodes Detected -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5 group hover:bg-surface-container-high transition-colors">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-label font-bold uppercase tracking-[0.2em] text-on-surface-variant">Nodes Detected</span>
+<span class="material-symbols-outlined text-on-surface-variant text-lg" data-icon="lan">lan</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-headline font-bold text-on-surface">450</span>
+<span class="material-symbols-outlined text-primary text-sm" data-icon="trending_up">trending_up</span>
+</div>
+<p class="text-[9px] font-label text-on-surface-variant/40 uppercase mt-2">+12 since last sweep</p>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-8 mb-12">
+<!-- Main Feed -->
+<div class="col-span-12 lg:col-span-8 space-y-6">
+<div class="flex justify-between items-center">
+<h3 class="text-lg font-headline font-bold tracking-tight text-on-surface flex items-center gap-3">
+                        Traffic Intelligence Feed
+                        <span class="text-[10px] font-label px-2 py-0.5 bg-primary-container/10 text-primary-container rounded border border-primary-container/20">REAL-TIME</span>
+</h3>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors"><span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors"><span class="material-symbols-outlined text-sm" data-icon="download">download</span></button>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl overflow-hidden">
+<div class="grid grid-cols-12 gap-4 px-6 py-4 bg-surface-container-high/50 text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant border-b border-outline-variant/5">
+<div class="col-span-2">Timestamp</div>
+<div class="col-span-3">Source (IP:Port)</div>
+<div class="col-span-3">Destination (IP:Port)</div>
+<div class="col-span-2">Protocol</div>
+<div class="col-span-2 text-right">Size (B)</div>
+</div>
+<div class="divide-y divide-outline-variant/5">
+<!-- Feed Item 1 -->
+<div class="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-surface-container-high/30 transition-colors group">
+<div class="col-span-2 font-label text-[11px] text-on-surface-variant/70">14:20:05.422</div>
+<div class="col-span-3 font-label text-sm text-on-surface">192.168.1.50<span class="text-primary-container/50">:443</span></div>
+<div class="col-span-3 font-label text-sm text-on-surface">104.18.26.110<span class="text-primary-container/50">:80</span></div>
+<div class="col-span-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary-fixed-dim" data-icon="dns">dns</span>
+<span class="text-[10px] font-bold font-headline text-primary-fixed-dim">HTTPS</span>
+</div>
+<div class="col-span-2 text-right font-label text-xs text-on-surface-variant">1,240</div>
+</div>
+<!-- Feed Item 2 -->
+<div class="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-surface-container-high/30 transition-colors bg-surface-container-lowest/20">
+<div class="col-span-2 font-label text-[11px] text-on-surface-variant/70">14:20:05.210</div>
+<div class="col-span-3 font-label text-sm text-on-surface">10.0.0.12<span class="text-primary-container/50">:50334</span></div>
+<div class="col-span-3 font-label text-sm text-on-surface">172.217.16.206<span class="text-primary-container/50">:443</span></div>
+<div class="col-span-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-secondary" data-icon="terminal">terminal</span>
+<span class="text-[10px] font-bold font-headline text-secondary">TCP</span>
+</div>
+<div class="col-span-2 text-right font-label text-xs text-on-surface-variant">64</div>
+</div>
+<!-- Feed Item 3 -->
+<div class="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-surface-container-high/30 transition-colors group">
+<div class="col-span-2 font-label text-[11px] text-on-surface-variant/70">14:20:04.998</div>
+<div class="col-span-3 font-label text-sm text-on-surface">192.168.1.101<span class="text-primary-container/50">:53</span></div>
+<div class="col-span-3 font-label text-sm text-on-surface">8.8.8.8<span class="text-primary-container/50">:53</span></div>
+<div class="col-span-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-on-tertiary-container" data-icon="cloud">cloud</span>
+<span class="text-[10px] font-bold font-headline text-on-tertiary-container">UDP</span>
+</div>
+<div class="col-span-2 text-right font-label text-xs text-on-surface-variant">256</div>
+</div>
+<!-- Feed Item 4 -->
+<div class="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-surface-container-high/30 transition-colors">
+<div class="col-span-2 font-label text-[11px] text-on-surface-variant/70">14:20:04.812</div>
+<div class="col-span-3 font-label text-sm text-on-surface">45.22.110.12<span class="text-primary-container/50">:80</span></div>
+<div class="col-span-3 font-label text-sm text-on-surface text-error">192.168.1.1<span class="text-error/50">:80</span></div>
+<div class="col-span-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-error" data-icon="report_problem">report_problem</span>
+<span class="text-[10px] font-bold font-headline text-error">DDoS</span>
+</div>
+<div class="col-span-2 text-right font-label text-xs text-on-surface-variant">15,400</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Alerts Sidebar -->
+<div class="col-span-12 lg:col-span-4 space-y-6">
+<div class="flex justify-between items-center">
+<h3 class="text-lg font-headline font-bold tracking-tight text-on-surface">Threat Triage</h3>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer" data-icon="sort">sort</span>
+</div>
+<div class="space-y-4">
+<!-- Critical Alert -->
+<div class="bg-surface-container-low p-4 rounded-xl border-l-4 border-error error-pulse flex gap-4 group cursor-pointer hover:bg-surface-container-high transition-all">
+<div class="flex-shrink-0 w-10 h-10 rounded-lg bg-error/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-error" data-icon="radar">radar</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-bold uppercase tracking-widest text-error">Reconnaissance</span>
+<span class="text-[9px] font-label text-on-surface-variant/40">2m ago</span>
+</div>
+<h4 class="text-sm font-headline font-semibold truncate">Active Port Scan Detected</h4>
+<p class="text-[10px] font-label text-on-surface-variant mt-1">Src: 185.22.41.102 -&gt; Local Segment</p>
+</div>
+</div>
+<!-- High Alert -->
+<div class="bg-surface-container-low p-4 rounded-xl border-l-4 border-tertiary-container flex gap-4 group cursor-pointer hover:bg-surface-container-high transition-all">
+<div class="flex-shrink-0 w-10 h-10 rounded-lg bg-tertiary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary-container" data-icon="lan_pending">lan</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-bold uppercase tracking-widest text-tertiary-container">DoS Attempt</span>
+<span class="text-[9px] font-label text-on-surface-variant/40">15m ago</span>
+</div>
+<h4 class="text-sm font-headline font-semibold truncate">UDP Flood identified</h4>
+<p class="text-[10px] font-label text-on-surface-variant mt-1">Target: DNS Resolver (Internal)</p>
+</div>
+</div>
+<!-- Medium Alert -->
+<div class="bg-surface-container-low p-4 rounded-xl border-l-4 border-primary flex gap-4 group cursor-pointer hover:bg-surface-container-high transition-all">
+<div class="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="vpn_key">vpn_key</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary">Service Access</span>
+<span class="text-[9px] font-label text-on-surface-variant/40">1h ago</span>
+</div>
+<h4 class="text-sm font-headline font-semibold truncate">Unusual SSH connection</h4>
+<p class="text-[10px] font-label text-on-surface-variant mt-1">Host: DEV-WEB-04 (Admin Auth)</p>
+</div>
+</div>
+</div>
+<!-- Glassmorphic Quick Analytics -->
+<div class="glass-panel p-6 rounded-2xl border border-outline-variant/10 mt-8">
+<h4 class="text-xs font-headline font-bold uppercase tracking-[0.2em] mb-6 text-on-surface">Protocol Distribution</h4>
+<div class="flex items-center gap-6">
+<div class="relative w-24 h-24">
+<svg class="w-full h-full -rotate-90">
+<circle cx="48" cy="48" fill="none" r="40" stroke="#2a2a2a" stroke-width="8"></circle>
+<circle cx="48" cy="48" fill="none" r="40" stroke="#00d4ff" stroke-dasharray="251" stroke-dashoffset="87" stroke-width="8"></circle>
+<circle cx="48" cy="48" fill="none" r="40" stroke="#a8e8ff" stroke-dasharray="251" stroke-dashoffset="200" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-lg font-headline font-bold">TCP</span>
+<span class="text-[8px] font-label uppercase text-on-surface-variant/60">Dominant</span>
+</div>
+</div>
+<div class="flex-1 space-y-2">
+<div class="flex justify-between items-center text-[10px]">
+<span class="font-label text-on-surface-variant">TCP</span>
+<span class="font-headline font-bold text-primary-container">65%</span>
+</div>
+<div class="flex justify-between items-center text-[10px]">
+<span class="font-label text-on-surface-variant">HTTPS</span>
+<span class="font-headline font-bold text-primary">20%</span>
+</div>
+<div class="flex justify-between items-center text-[10px]">
+<span class="font-label text-on-surface-variant">DNS</span>
+<span class="font-headline font-bold text-secondary">10%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Secondary Analytics Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="md:col-span-2 bg-surface-container-low rounded-xl p-6 border border-outline-variant/5">
+<h4 class="text-sm font-headline font-bold uppercase tracking-widest mb-6">Top 10 Risky Hosts</h4>
+<div class="space-y-4">
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-4">
+<span class="text-[10px] font-label text-on-surface-variant/40">01</span>
+<span class="text-xs font-label">malware-cnc.ru.net</span>
+<span class="text-[9px] bg-error/10 text-error px-2 py-0.5 rounded uppercase font-bold">Known C2</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="w-24 h-4 flex items-end gap-0.5">
+<div class="w-1 h-full bg-error/20"></div>
+<div class="w-1 h-3 bg-error/20"></div>
+<div class="w-1 h-4 bg-error/20"></div>
+<div class="w-1 h-2 bg-error"></div>
+<div class="w-1 h-4 bg-error"></div>
+</div>
+<span class="text-xs font-headline font-bold text-error">9.8</span>
+</div>
+</div>
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-4">
+<span class="text-[10px] font-label text-on-surface-variant/40">02</span>
+<span class="text-xs font-label">anon-proxy.tor-node.io</span>
+<span class="text-[9px] bg-tertiary-container/10 text-tertiary-container px-2 py-0.5 rounded uppercase font-bold">Exit Node</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="w-24 h-4 flex items-end gap-0.5">
+<div class="w-1 h-2 bg-primary/20"></div>
+<div class="w-1 h-4 bg-primary/20"></div>
+<div class="w-1 h-3 bg-primary"></div>
+<div class="w-1 h-2 bg-primary"></div>
+<div class="w-1 h-1 bg-primary"></div>
+</div>
+<span class="text-xs font-headline font-bold text-tertiary-container">7.2</span>
+</div>
+</div>
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-4">
+<span class="text-[10px] font-label text-on-surface-variant/40">03</span>
+<span class="text-xs font-label">192.168.1.105 (Local)</span>
+<span class="text-[9px] bg-primary/10 text-primary px-2 py-0.5 rounded uppercase font-bold">Unusual Vol</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="w-24 h-4 flex items-end gap-0.5">
+<div class="w-1 h-1 bg-primary/20"></div>
+<div class="w-1 h-2 bg-primary/20"></div>
+<div class="w-1 h-1 bg-primary/20"></div>
+<div class="w-1 h-3 bg-primary/40"></div>
+<div class="w-1 h-4 bg-primary"></div>
+</div>
+<span class="text-xs font-headline font-bold text-primary">5.1</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Threat Map Aesthetic Placeholder -->
+<div class="relative bg-surface-container-low rounded-xl overflow-hidden border border-outline-variant/5">
+<img class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-screen" data-alt="Abstract cyber network visualization with glowing nodes and digital connection lines on a dark obsidian background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-nkgy9Rb5ijgNXRuCZWP00ad2Ccwwtf6pyKooWGAFQM_WIKMh488iU4Y4utnA-FZ_NwGicN8sUrWCFD0RfmpkuTr5IlSwi2pHr9co4XnjH6xWPxzuk49UEzHZubCbahzkXxDYnfjOv-fAZaKg1jnAw779c57DNWrs_avAiO3VCferhussR7ErUFhDJLl1wxQ4S4m8SwzlyWCocvCT8mwjW_rRHq_bnAmVC47sXfPcT4d2tOOjFeQzktZxxgJeXMgM0GxS6OeQ5WMB"/>
+<div class="relative z-10 p-6 h-full flex flex-col justify-between">
+<div>
+<h4 class="text-sm font-headline font-bold uppercase tracking-widest">Global Ingress Map</h4>
+<p class="text-[9px] text-on-surface-variant mt-1 uppercase">Live Heatmap Projection</p>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center bg-surface-container-lowest/80 p-2 rounded-lg backdrop-blur-sm border border-outline-variant/5">
+<span class="text-[9px] font-label">Active Connections</span>
+<span class="text-xs font-headline font-bold text-primary-container">2,492</span>
+</div>
+<div class="flex justify-between items-center bg-surface-container-lowest/80 p-2 rounded-lg backdrop-blur-sm border border-outline-variant/5">
+<span class="text-[9px] font-label">Blocked (Global)</span>
+<span class="text-xs font-headline font-bold text-error">45k</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Shell -->
+<footer class="fixed bottom-0 left-64 right-0 z-30 flex justify-between items-center px-8 py-2 bg-[#0e0e0e] tonal shift from surface_container_low no-border h-10">
+<div class="flex items-center gap-6 text-[10px] font-label uppercase tracking-[0.2em] text-[#e5e2e1]/40">
+<span>System Uptime: 42d 12h 05m</span>
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span class="text-primary-container font-bold">Sensor: Active</span>
+</div>
+</div>
+<div class="flex gap-6 items-center">
+<a class="text-[10px] uppercase tracking-[0.2em] text-[#e5e2e1]/40 hover:text-[#00d4ff] transition-all duration-300" href="#">Threat Database v.402</a>
+<div class="w-px h-4 bg-outline-variant/20"></div>
+<span class="text-[10px] uppercase tracking-[0.2em] text-[#e5e2e1]/40">NetSentry Sentinel © 2024</span>
+</div>
+</footer>
+</body></html>
