@@ -194,16 +194,16 @@ This repository currently focuses on:
 ## Dashboard Screenshots
 
 ### Overview
-![Overview](sniffer 1\Screenshot 2026-03-29 192611.png)
+<img width="2532" height="1368" alt="Screenshot 2026-03-29 192611" src="https://github.com/user-attachments/assets/eb2c985d-6beb-418d-8664-5cc52453780a" />
 
 ### Traffic Feed
-![Traffic Feed](sniffer 1\Screenshot 2026-03-29 192620.png)
+<img width="2526" height="1334" alt="Screenshot 2026-03-29 192620" src="https://github.com/user-attachments/assets/e59e402a-662b-406e-905c-bffbf4350d96" />
 
 ### Threat Triage
-![Threat Triage](sniffer 1\Screenshot 2026-03-29 192631.png)
+<img width="2547" height="1362" alt="Screenshot 2026-03-29 192631" src="https://github.com/user-attachments/assets/df9aa3fc-5f04-4ff5-9526-74d94a487102" />
 
 ### Report
-![Report](sniffer 1\Screenshot 2026-03-29 192703.png)
+<img width="2543" height="1337" alt="Screenshot 2026-03-29 192703" src="https://github.com/user-attachments/assets/f3df75ed-e6ba-4a2d-a957-d531438fa54b" />
 
 
 ---
